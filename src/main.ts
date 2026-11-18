@@ -11,6 +11,7 @@ import { isSupportedLocale, SUPPORTED_LOCALES, type SupportedLocale } from '@sha
 import { setI18nLocale } from '@shared/utils/i18n'
 import { usePreferenceStore } from './stores/preference'
 import { SYSTEM_WINDOW_SCALE, systemWindowScale } from './composables/useWindowScale'
+import { fitInitialMainWindow } from './composables/fitInitialMainWindow'
 import { useTaskStore } from './stores/task'
 import { useAppStore } from './stores/app'
 import { useHistoryStore } from './stores/history'
@@ -344,7 +345,7 @@ if (isFloatWindow) {
     // ── Phase 1: critical path → window visible ASAP ──────────────────────
     await preferenceStore.loadPreference()
 
-    await applyStartupLocale()
+    await Promise.all([applyStartupLocale(), fitInitialMainWindow(preferenceStore.config.keepWindowState)])
 
     // Mount only after preference + locale hydration so root-level theme,
     // color-scheme, locale, and layout watchers see stable persisted values
